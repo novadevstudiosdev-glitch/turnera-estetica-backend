@@ -40,10 +40,12 @@ async function bootstrap() {
 
   const port = process.env.PORT ? Number(process.env.PORT) : 3000;
   await app.listen(port, '0.0.0.0');
-  const publicUrl = process.env.BACKEND_URL
-    ? `https://${process.env.BACKEND_URL}`
-    : `http://localhost:${port}`;
+  const publicUrl =
+    process.env.NODE_ENV === 'production'
+      ? `https://${process.env.BACKEND_URL}`
+      : `http://localhost:${port}`;
 
+  console.log(`🚀 Application running on: ${publicUrl}`);
   if (process.env.SWAGGER_ENABLED === 'true') {
     console.log(`📚 Swagger UI: ${publicUrl}/api/docs`);
   }
