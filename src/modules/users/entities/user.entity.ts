@@ -131,7 +131,7 @@ export class User {
   @BeforeUpdate()
   async hashPassword() {
     // Solo hashear si hay password y fue modificada
-    if (this.passwordHash && !this.passwordHash.startsWith('$2a$')) {
+    if (this.passwordHash && !this.passwordHash.startsWith('$2')) {
       const salt = await bcrypt.genSalt(10);
       this.passwordHash = await bcrypt.hash(this.passwordHash, salt);
     }

@@ -1,4 +1,59 @@
-import { PartialType } from '@nestjs/swagger';
+import { PartialType, OmitType } from '@nestjs/swagger';
+import { IsString, IsOptional, IsEnum, MaxLength } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { CreateAppointmentDto } from './create-appointment.dto';
+import {
+  AppointmentStatus,
+  PaymentStatus,
+} from '../entities/appointment.entity';
 
-export class UpdateAppointmentDto extends PartialType(CreateAppointmentDto) {}
+// DTO para actualizar (solo admin)
+export class UpdateAppointmentDto extends PartialType(CreateAppointmentDto) {
+  @ApiPropertyOptional({
+    enum: AppointmentStatus,
+    description: 'Estado del turno',
+  })
+  @IsOptional()
+  @IsEnum(AppointmentStatus, { message: 'Estado inválido' })
+  status?: AppointmentStatus;
+
+  @ApiPropertyOptional({
+    enum: PaymentStatus,
+    description: 'Estado del pago',
+  })
+  @IsOptional()
+  @IsEnum(PaymentStatus, { message: 'Estado de pago inválido' })
+  paymentStatus?: PaymentStatus;
+
+  @ApiPropertyOptional({
+    example: 'Paciente llegó 10 minutos tarde',
+    description: 'Notas internas del admin',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(1000, { message: 'Las notas no pueden exceder 1000 caracteres' })
+  notes?: string;
+}
+
+// DTO para crear turno como admin (sin validaciones de disponibilidad)
+export class AdminCreateAppointmentDto extends CreateAppointmentDto {
+  @ApiPropertyOptional({
+    example: 'Turno creado por pedido telefónico',
+    description: 'Notas internas del admin sobre la creación',
+  })
+  @IsOptional()
+  @IsString()
+  notes?: string;
+}
+
+// DTO para cancelar turno
+export class CancelAppointmentDto {
+  @ApiPropertyOptional({
+    example: 'No puedo asistir por motivos personales',
+    description: 'Motivo de la cancelación',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(500, { message: 'El motivo no puede exceder 500 caracteres' })
+  cancellationReason?: string;
+}
