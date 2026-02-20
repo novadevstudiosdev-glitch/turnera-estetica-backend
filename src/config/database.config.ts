@@ -4,6 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import { User } from '../modules/users/entities/user.entity';
 import { PasswordResetToken } from '../modules/users/entities/password-reset-token.entity';
 import { EmailVerificationToken } from '../modules/users/entities/email-verification-token.entity';
+import { Service } from '../modules/services/entities/service.entity';
+import { Appointment } from '@/modules/appointments/entities/appointment.entity';
 
 export const getDatabaseConfig = (
   configService: ConfigService,
@@ -18,6 +20,9 @@ export const getDatabaseConfig = (
     User,
     PasswordResetToken,
     EmailVerificationToken,
+    Service,
+    Service,
+    Appointment,
     // Agregar más cuando las crees
   ],
   synchronize: configService.get('NODE_ENV') === 'development',

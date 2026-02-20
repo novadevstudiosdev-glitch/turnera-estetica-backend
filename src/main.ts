@@ -2,9 +2,18 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path/win32';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Solo servir archivos estáticos en desarrollo
+  if (process.env.NODE_ENV === 'development') {
+    const app = await NestFactory.create<NestExpressApplication>(AppModule);
+    app.useStaticAssets(join(__dirname, '..', 'public'));
+    console.log('📁 Static files enabled: /public');
+  }
 
   // Global prefix for all routes, excluding health, checks and root
   app.setGlobalPrefix(process.env.API_PREFIX || 'api', {
@@ -40,10 +49,14 @@ async function bootstrap() {
 
   const port = process.env.PORT ? Number(process.env.PORT) : 3000;
   await app.listen(port, '0.0.0.0');
-  const url = `http://localhost:${port}`;
-  console.log(`🚀 Application running on: ${url}`);
+  const publicUrl =
+    process.env.NODE_ENV === 'production'
+      ? `https://${process.env.BACKEND_URL}`
+      : `http://localhost:${port}`;
+
+  console.log(`🚀 Application running on: ${publicUrl}`);
   if (process.env.SWAGGER_ENABLED === 'true') {
-    console.log(`🔍 Swagger UI: ${url}/api/docs`);
+    console.log(`📚 Swagger UI: ${publicUrl}/api/docs`);
   }
 }
 bootstrap();

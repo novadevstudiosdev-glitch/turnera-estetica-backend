@@ -5,8 +5,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  Index,
 } from 'typeorm';
-import { Appointment } from '../../appointments/entities/appointment.entity';
 
 @Entity('services')
 export class Service {
@@ -29,9 +29,11 @@ export class Service {
   depositAmount: number;
 
   @Column({ name: 'is_active', type: 'boolean', default: true })
+  @Index()
   isActive: boolean;
 
   @Column({ name: 'display_order', type: 'int', default: 0 })
+  @Index()
   displayOrder: number;
 
   @CreateDateColumn({ name: 'created_at' })
@@ -40,7 +42,7 @@ export class Service {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
-  // Relations
+  // Relations - comentado hasta crear el módulo de appointments
   // @OneToMany(() => Appointment, (appointment) => appointment.service)
   // appointments: Appointment[];
 }
